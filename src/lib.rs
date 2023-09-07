@@ -85,9 +85,9 @@ pub async fn get_calander() -> Option<NamedFile> {
         }
     }
 
-    fs::write("cal.ical", format!("{}", cal).as_bytes()).expect("Couldn't write to cal.ical");
+    fs::write("cal.ics", format!("{}", cal).as_bytes()).expect("Couldn't write to cal.ics");
 
-    match NamedFile::open("cal.ical").await {
+    match NamedFile::open("cal.ics").await {
         Ok(val) => Some(val),
         Err(_) => None
     }
