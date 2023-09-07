@@ -26,13 +26,6 @@ pub async fn get_calander() -> Option<NamedFile> {
 
     let mut cal = Calendar::new();
 
-    cal.push(
-        Event::new()
-        .summary("This is an event :)")
-        .all_day(NaiveDate::from_ymd_opt(2023, 10, 4)?)
-        .done()
-    );
-
     for (index, day) in week.iter().enumerate() {
         let classes = day.as_array()?;
         let mut skip = false;
