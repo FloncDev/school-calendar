@@ -8,5 +8,3 @@ A web server that takes in my schedule as a json file and returns it in .ical fo
 - [ ] Add integration with Edulink ical export
     - Edulink is the software my school uses, it supports export to ICAL but only for the next week.
 - [ ] Dockerize
-
-_Yes, I know the repo name is spelt wrong_
