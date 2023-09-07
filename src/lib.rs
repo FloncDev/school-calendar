@@ -60,28 +60,20 @@ pub async fn get_calander() -> Option<NamedFile> {
             
             let mut start_dt = NaiveDateTime::new(day, start_time);
             let mut end_dt = NaiveDateTime::new(day, end_time);
-
-            cal.push(
-                Event::new()
-                .summary(&obj["name"].as_str()?)
-                .location(&obj["classroom"].as_str()?)
-                .starts(start_dt)
-                .ends(end_dt)
-                .done()
-            );
-
-            // Also add for next week
-            start_dt += Duration::weeks(1);
-            end_dt += Duration::weeks(1);
-
-            cal.push(
-                Event::new()
-                .summary(&obj["name"].as_str()?)
-                .location(obj["classroom"].as_str()?)
-                .starts(start_dt)
-                .ends(end_dt)
-                .done()
-            );
+            
+            for offest in 0..=1 {
+                start_dt += Duration::weeks(offest);
+                end_dt += Duration::weeks(offest);
+    
+                cal.push(
+                    Event::new()
+                    .summary(&obj["name"].as_str()?)
+                    .location(obj["classroom"].as_str()?)
+                    .starts(start_dt)
+                    .ends(end_dt)
+                    .done()
+                );
+            }
         }
     }
 
