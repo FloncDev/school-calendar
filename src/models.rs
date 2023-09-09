@@ -19,11 +19,11 @@ pub struct Week {
 impl Week {
     pub fn new(json: Value) -> Option<Self> {
         let week = json.as_array()?;
-        let mut days: Vec<Day>;
+        let mut days: Vec<Day> = vec![];
         
         for (day_index, day) in week.iter().enumerate() {
             let classes = day.as_array()?;
-            let mut day_classes: Vec<Class>;
+            let mut day_classes: Vec<Class> = vec![];
             let mut skip = false;
 
             for (class_index, class) in classes.iter().enumerate() {
@@ -49,10 +49,10 @@ impl Week {
                     None => {}
                 }
                 
-                let mut length = end_time - start_time;
+                let length = end_time - start_time;
 
                 let date = Local::now().date_naive();
-                let weekday = Weekday::try_from(class_index as u8).unwrap();
+                let weekday = Weekday::try_from(day_index as u8).unwrap();
                 let day = NaiveDate::from_isoywd_opt(date.year(), date.iso_week().week(), weekday)?;
 
                 let start_dt = NaiveDateTime::new(day, start_time);
