@@ -1,0 +1,7 @@
+services:
+  school_calendar:
+    build: .
+    container_name: school_calendar
+    ports:
+      - 9001:9001
+    restart: unless-stopped

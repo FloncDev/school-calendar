@@ -1,0 +1,14 @@
+FROM rust:1.70.0
+
+ENV ROCKET_ADDRESS=0.0.0.0
+ENV ROCKET_PORT=9001
+ENV ROCKET_ENV=prod
+
+EXPOSE 9001
+
+COPY . /app
+WORKDIR /app
+
+RUN cargo build
+
+CMD ["cargo", "run"]
