@@ -11,4 +11,4 @@ A web server that takes in my schedule as a json file and returns it in .ical fo
 - [ ] Add period 7 and 8 + clubs
     - After school extra lessons / clubs. Could change on a weekly basis
     - Could also mean adding a scheduler to make sure I go to everything I want to equally
-- [ ] Dockerize
+- [x] Dockerize
