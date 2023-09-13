@@ -17,7 +17,7 @@ pub struct Week {
 }
 
 impl Week {
-    pub fn new(json: Value) -> Option<Self> {
+    pub fn new(json: Value) -> Option<Week> {
         let week = json.as_array()?;
         let mut days: Vec<Day> = vec![];
         
@@ -77,5 +77,36 @@ impl Week {
         }
 
         Some(Week { days })
+    }
+}
+
+pub struct Homework {
+    pub summary: String,
+    pub class: String,
+    pub due: NaiveDate,
+    pub estimated_length: Duration
+}
+
+impl Homework {
+    #[doc = "Example shorthand: CS 20/09 15 The rest of this is a summary"]
+    pub fn from_shorthand(shorthand: String) -> Homework {
+        let mut split = shorthand.split(" ").into_iter();
+
+        // TODO: Get class from another function
+        let class = String::from("Computer Science 11B/Cs1");
+        split.next();
+        
+        let due = NaiveDate::parse_from_str(split.next().unwrap(), "%d/%m").expect("Date is in wrong format");
+
+        let length = Duration::minutes(split.next().unwrap().parse::<i64>().unwrap());
+
+        let summary: String = split.map(|x| x.to_owned() + " ").collect();
+
+        Homework {
+            summary: summary.trim().to_owned(),
+            class,
+            due,
+            estimated_length: length
+        }
     }
 }
