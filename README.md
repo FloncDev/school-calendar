@@ -3,6 +3,7 @@ A web server that takes in my schedule as a json file and returns it in .ical fo
 
 ## How to use
 Currently it is not in a usable state for the public but if you want you could try. Create a file called `schedule.json` in the same directory as this README.md file. Inside, copy the following format
+_the following is out of date, json structure has been updated. TODO: change
 ```json
 [
     [
