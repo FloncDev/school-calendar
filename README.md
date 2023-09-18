@@ -25,7 +25,7 @@ The first array is for the days, and the second is for the classes in that day. 
 - [ ] Add integration with Edulink ical export
     - Edulink is the software my school uses, it supports export to ICAL but only for the next week.
 - [ ] Add school events
-- [ ] Add period 7 and 8 + clubs
+- [x] Add period 7 and 8 + clubs
     - After school extra lessons / clubs. Could change on a weekly basis
     - Could also mean adding a scheduler to make sure I go to everything I want to equally
 - [x] Dockerize

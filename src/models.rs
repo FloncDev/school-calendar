@@ -17,7 +17,7 @@ pub struct Week {
 }
 
 impl Week {
-    pub fn new(json: Value) -> Option<Week> {
+    pub fn new(json: &Value) -> Option<Week> {
         let week = json.as_array()?;
         let mut days: Vec<Day> = vec![];
         
