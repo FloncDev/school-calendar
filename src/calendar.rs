@@ -1,14 +1,16 @@
 use std::{fs, time::SystemTime};
 use chrono::Duration;
 use icalendar::{Calendar, Event, Component, EventLike, parser::read_calendar};
-use serde_json;
+use serde_json::{self, Value};
 use crate::models::Week;
 
 pub fn json_to_cal() -> Calendar {
-    let data = fs::read_to_string("schedule.json").unwrap();
-    let json = serde_json::from_str(&data).expect("Invalid JSON");
+    let data = fs::read_to_string("data.json").unwrap();
+    let json: Value = serde_json::from_str(&data).expect("Invalid JSON");
+
+    let json_data = json.as_object().unwrap();
     
-    let week = Week::new(json).unwrap();
+    let week = Week::new(json_data.get("schedule.json").unwrap().clone()).unwrap();
     let mut cal: Calendar = Calendar::new();
 
     for day in week.days {
