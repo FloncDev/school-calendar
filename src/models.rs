@@ -1,8 +1,8 @@
 use chrono::NaiveDate;
 
-struct Homework {
-    activity: String,
-    subject: String,
-    due: NaiveDate,
-    set_by: String,
+pub struct Homework {
+    pub activity: String,
+    pub subject: String,
+    pub due: NaiveDate,
+    pub set_by: String,
 }
