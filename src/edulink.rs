@@ -91,7 +91,7 @@ impl EduLink {
     }
 
     pub async fn from_json(json: TokenJSON) -> Self {
-        let expires = NaiveDateTime::from_timestamp_opt(json.expires, 0).unwrap();
+        let expires = NaiveDateTime::from_timestamp_opt(json.expires.parse().unwrap(), 0).unwrap();
 
         if expires < Local::now().naive_local() {
             return EduLink::new().await;
