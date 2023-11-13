@@ -4,13 +4,13 @@ use reqwest::{
     header::{HeaderMap, HeaderValue, CONTENT_TYPE, USER_AGENT},
     Client,
 };
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
-use std::env;
+use std::{env, fs::File};
 
 const BASE_URL: &str = "https://www9.edulinkone.com/api/";
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Serialize)]
 pub struct TokenJSON {
     token: String,
     expires: String,
@@ -28,6 +28,7 @@ struct LoginResult {
     children: Vec<Learner>,
 }
 
+#[derive(Debug)]
 pub struct EduLink {
     pub auth_token: String,
     pub expires: NaiveDateTime,
@@ -65,8 +66,6 @@ impl EduLink {
             "id": "1"
         });
 
-        println!("{}", login_json);
-
         let response = client
             .post(BASE_URL)
             .headers(headers)
@@ -82,9 +81,22 @@ impl EduLink {
 
         let learner_id = result.children[0].clone().id;
 
+        // Save to file
+        let expires = (Local::now() + Duration::seconds(1800)).naive_local();
+
+        serde_json::to_writer(
+            &File::create("./.token.json").unwrap(),
+            &TokenJSON {
+                token: result.authtoken.clone(),
+                expires: expires.timestamp().to_string(),
+                learner_id: learner_id.clone(),
+            },
+        )
+        .expect("Could not write to file");
+
         EduLink {
             auth_token: result.authtoken,
-            expires: (Local::now() + Duration::seconds(1800)).naive_local(),
+            expires,
             client,
             learner_id,
         }
