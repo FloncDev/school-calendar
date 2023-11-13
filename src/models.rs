@@ -1,5 +1,6 @@
 use chrono::NaiveDate;
 
+#[derive(Debug)]
 pub struct Homework {
     pub activity: String,
     pub subject: String,
