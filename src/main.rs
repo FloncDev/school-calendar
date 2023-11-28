@@ -58,7 +58,19 @@ async fn get_homeworks() -> impl IntoResponse {
 async fn get_timetable() -> impl IntoResponse {
     let mut session = get_edulink().await;
 
-    session.get_timetable().await;
+    let timetable = session.get_timetable().await;
+    let mut calendar = Calendar::new();
 
-    return "Hello, World!";
+    for lesson in timetable {
+        calendar.push(
+            Event::new()
+                .summary(lesson.lesson.as_str())
+                .description(format!("{}\n\n{}", lesson.room, lesson.teacher).as_str())
+                .starts(lesson.start_time)
+                .ends(lesson.end_time)
+                .done(),
+        );
+    }
+
+    format!("{}", calendar)
 }

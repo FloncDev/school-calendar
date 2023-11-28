@@ -1,4 +1,4 @@
-use chrono::{Duration, NaiveDate, NaiveTime, Utc};
+use chrono::{Duration, NaiveDate, NaiveDateTime, NaiveTime, Utc};
 use reqwest::header::HeaderValue;
 use serde_json::{json, Value};
 use std::iter::zip;
@@ -74,14 +74,14 @@ impl EduLink {
             NaiveTime::from_hms_opt(8, 55, 0).unwrap(),
         );
 
+        let mut lessons: Vec<Lesson> = vec![];
+
         for week in weeks.as_array().unwrap() {
             let days = week.get("days").unwrap().as_array().unwrap();
 
             for day in days {
-                let date = NaiveDate::parse_from_str(
-                    "%Y-%m-%d",
-                    day.get("date").unwrap().as_str().unwrap(),
-                );
+                let date = day.get("date").unwrap().as_str().unwrap();
+                let date = NaiveDate::parse_from_str(date, "%Y-%m-%d").unwrap();
                 let weekday = day.get("name").unwrap().as_str().unwrap();
 
                 let start_times = if weekday == "Monday" {
@@ -90,13 +90,42 @@ impl EduLink {
                     &normal_start_times
                 };
 
-                for (start_time, lesson) in zip(start_times, day.get("lessons").unwrap().as_array().unwrap()) {
-                    let subject = lesson.get("teaching_group").unwrap().get("subject").unwrap().as_str().unwrap();
+                for (start_time, lesson) in
+                    zip(start_times, day.get("lessons").unwrap().as_array().unwrap())
+                {
+                    let subject = lesson
+                        .get("teaching_group")
+                        .unwrap()
+                        .get("subject")
+                        .unwrap()
+                        .as_str()
+                        .unwrap();
+                    let teacher = lesson.get("teachers").unwrap().as_str().unwrap();
+
+                    let room = match lesson.get("room").unwrap().get("name").unwrap().as_str() {
+                        Some(val) => val,
+                        None => "GYM", // For some reason the gym has no room
+                    };
+
+                    let start_datetime = NaiveDateTime::new(date, start_time.to_owned());
+
+                    lessons.push(Lesson {
+                        start_time: start_datetime,
+                        end_time: start_datetime + {
+                            if weekday == "Monday" {
+                                Duration::minutes(45)
+                            } else {
+                                Duration::minutes(50)
+                            }
+                        },
+                        lesson: subject.to_string(),
+                        teacher: teacher.to_string(),
+                        room: room.to_string(),
+                    })
                 }
             }
         }
 
-        let mut lessons: Vec<Lesson> = vec![];
         lessons
     }
 }
