@@ -1,4 +1,4 @@
-use chrono::{Duration, Local, NaiveDate, NaiveDateTime, NaiveTime, Utc};
+use chrono::{Duration, Local, NaiveDateTime};
 use dotenvy::dotenv;
 use reqwest::{
     header::{HeaderMap, HeaderValue, AUTHORIZATION, CONTENT_TYPE, USER_AGENT},
@@ -8,9 +8,7 @@ use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
 use std::{env, fs::File};
 
-use crate::models::{Homework, Lesson};
-
-const BASE_URL: &str = "https://www9.edulinkone.com/api/";
+pub const BASE_URL: &str = "https://www9.edulinkone.com/api/";
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct TokenJSON {
@@ -28,14 +26,6 @@ struct Learner {
 struct LoginResult {
     authtoken: String,
     children: Vec<Learner>,
-}
-
-#[derive(Debug, Deserialize)]
-struct APIHomework {
-    activity: String,
-    subject: String,
-    due_date: String,
-    set_by: String,
 }
 
 #[derive(Debug)]
@@ -129,7 +119,7 @@ impl EduLink {
         }
     }
 
-    fn get_headers(&mut self) -> HeaderMap {
+    pub fn get_headers(&mut self) -> HeaderMap {
         let mut headers = HeaderMap::new();
 
         headers.insert(CONTENT_TYPE, HeaderValue::from_static("application/json"));
@@ -141,81 +131,5 @@ impl EduLink {
         );
 
         headers
-    }
-
-    pub async fn get_homework(&mut self) -> Vec<Homework> {
-        let mut headers = self.get_headers();
-        headers.insert("X-API-Method", HeaderValue::from_static("EduLink.Homework"));
-
-        let req_json = json!({
-            "jsonrpc": "2.0",
-            "params": {
-                "format": 2,
-                "learner_id": self.learner_id
-            },
-            "id": 1
-        });
-
-        let response = self
-            .client
-            .post(BASE_URL)
-            .headers(headers)
-            .json(&req_json)
-            .send()
-            .await
-            .unwrap();
-
-        let data: Value = response.json().await.unwrap();
-
-        let homeworks: Vec<APIHomework> =
-            serde_json::from_value(data["result"]["homework"]["current"].clone()).unwrap();
-
-        homeworks
-            .iter()
-            .map(|homework| Homework {
-                activity: homework.activity.clone(),
-                subject: homework.subject.clone(),
-                due: NaiveDate::parse_from_str(homework.due_date.as_str(), "%Y-%m-%d").unwrap(),
-                set_by: homework.set_by.clone(),
-            })
-            .collect()
-    }
-
-    pub async fn get_timetable(&mut self) -> Vec<Lesson> {
-        let mut headers = self.get_headers();
-        headers.insert(
-            "X-API-Method",
-            HeaderValue::from_static("EduLink.Timetable"),
-        );
-
-        let now = Utc::now().date_naive();
-
-        let req_json = json!({
-            "jsonrpc": "2.0",
-            "params": {
-                "date": now.format("%Y-%m-%d").to_string(),
-                "learner_id": self.learner_id
-            },
-            "id": 1
-        });
-
-        let response = self
-            .client
-            .post(BASE_URL)
-            .headers(headers)
-            .json(&req_json)
-            .send()
-            .await
-            .unwrap();
-
-        let json: Value = response.json().await.unwrap();
-        let weeks: &Value = json.get("weeks").unwrap();
-
-        let lesson_times = self.generate_timetable(NaiveTime, lesson_duration)
-
-        for week in weeks.as_array().unwrap() {}
-
-        let mut lessons: Vec<Lesson> = vec![];
-        lessons
     }
 }

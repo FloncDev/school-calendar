@@ -10,7 +10,8 @@ pub mod models;
 async fn main() {
     let app = Router::new()
         .route("/", get(read_root))
-        .route("/homeworks", get(get_homeworks));
+        .route("/homeworks", get(get_homeworks))
+        .route("/timetable", get(get_timetable));
 
     println!("Running app on 0.0.0.0:3000");
     axum::Server::bind(&"0.0.0.0:3000".parse().unwrap())
@@ -52,4 +53,12 @@ async fn get_homeworks() -> impl IntoResponse {
     }
 
     format!("{}", calendar)
+}
+
+async fn get_timetable() -> impl IntoResponse {
+    let mut session = get_edulink().await;
+
+    session.get_timetable().await;
+
+    return "Hello, World!";
 }
